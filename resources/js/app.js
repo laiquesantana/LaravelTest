@@ -3,11 +3,30 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
+import VueRouter from 'vue-router'
+import Vuex from 'vuex'
+import Toasted from 'vue-toasted';
 require('./bootstrap');
 
 window.Vue = require('vue');
 
+
+
+Vue.use(Toasted)
+Vue.use(VueRouter)
+Vue.use(Vuex)
+
+let routes = [
+    { path: '/dashboard', component: require('./components/Dashboard.vue').default },
+    { path: '/profile', component: require('./components/Profile.vue').default },
+    { path: '/users', component: require('./components/Users.vue').default }
+  ]
+
+  
+const router = new VueRouter({
+    mode:'history',
+    routes // short for `routes: routes`
+  })
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -27,6 +46,9 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+  
+
 const app = new Vue({
+    router,
     el: '#app',
 });
