@@ -6,21 +6,66 @@
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import Toasted from 'vue-toasted';
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import VueProgressBar from 'vue-progressbar';
+import moment from 'moment';
+
+moment.locale('pt-br');     
+
+const options = {
+    color: '#bffaf3',
+    failedColor: '#874b4b',
+    thickness: '5px',
+    transition: {
+      speed: '0.2s',
+      opacity: '0.6s',
+      termination: 300
+    },
+    autoRevert: true,
+    location: 'left',
+    inverse: false
+  }
+  
+
 require('./bootstrap');
 
 window.Vue = require('vue');
 
+Vue.use(VueProgressBar, options)
 
 
 Vue.use(Toasted)
 Vue.use(VueRouter)
 Vue.use(Vuex)
+// Install BootstrapVue
+Vue.use(BootstrapVue)
+// Optionally install the BootstrapVue icon components plugin
+Vue.use(IconsPlugin)
 
 let routes = [
     { path: '/dashboard', component: require('./components/Dashboard.vue').default },
     { path: '/profile', component: require('./components/Profile.vue').default },
     { path: '/users', component: require('./components/Users.vue').default }
   ]
+
+
+// filters
+
+Vue.filter('upText', function(text) {
+    return  text === null ? 'Não Informado': text.charAt(0).toUpperCase()+ text.slice(1) ;
+});
+
+Vue.filter('statusUsuario', function(status) {
+    return  status === 1 ? 'Ativo': 'Inativo' ;
+});
+
+
+Vue.filter('formatData', function(data) {
+    return moment(data).format('LLL');   
+});
+
 
   
 const router = new VueRouter({
