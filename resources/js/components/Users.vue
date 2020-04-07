@@ -136,7 +136,17 @@
 <script>
 export default {
   created() {
+    this.$Progress.start();
     this.carregarUsuarios();
+    
+    Toast.fire({
+      icon: 'success',
+      title: 'Lista de Usuários Carregada com Sucesso !'
+    })
+
+    this.$Progress.finish();
+
+
   },
   data() {
     return {
@@ -158,23 +168,41 @@ export default {
 
     criarUsuario() {
       if (this.loaded) {
+        this.$Progress.start();
+
         this.loaded = false;
         this.success = false;
         this.errors = {};
         axios
           .post(this.action, this.fields)
           .then(response => {
-            console.log(response);
             this.fields = {}; //Clear input fields.
             this.loaded = true;
             this.success = true;
+            $('#novoUsuario').modal('hide');
+            Toast.fire({
+              icon: 'success',
+              title: 'Usuário Criado com Sucesso !'
+            })
+
+            this.$Progress.finish();
+            this.carregarUsuarios();
+      
           })
           .catch(error => {
             this.loaded = true;
             if (error.response.status === 422) {
               this.errors = error.response.data.errors || {};
             }
+            Toast.fire({
+              icon: 'error',
+              title: 'Ops houve um problema no formulário, tente novamente!'
+            })
+
+            this.$Progress.fail()
+
           });
+
       }
     }
   }

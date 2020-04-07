@@ -11,6 +11,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import VueProgressBar from 'vue-progressbar';
 import moment from 'moment';
+import Swal from 'sweetalert2';
+
 
 moment.locale('pt-br');     
 
@@ -24,7 +26,7 @@ const options = {
       termination: 300
     },
     autoRevert: true,
-    location: 'left',
+    location: 'top',
     inverse: false
   }
   
@@ -32,9 +34,24 @@ const options = {
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.Fire =  new Vue();
 
+window.swal = Swal;
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  onOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
+})
+
+window.Toast = Toast;
 Vue.use(VueProgressBar, options)
-
 
 Vue.use(Toasted)
 Vue.use(VueRouter)
