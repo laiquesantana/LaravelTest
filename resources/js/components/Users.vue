@@ -7,7 +7,7 @@
             <h3 class="card-title">Lista de Usuários</h3>
 
             <div class="card-tools">
-              <button class="btn btn-success" data-toggle="modal" data-target="#novoUsuario">
+              <button class="btn btn-success" @click="newModal">
                 Adicionar Novo Usuário
                 <i class="fas fa-user-plus fa-fw"></i>
               </button>
@@ -21,7 +21,6 @@
                   <th>ID</th>
                   <th>Nome</th>
                   <th>Email</th>
-                  <th>Status</th>
                   <th>Tipo</th>
                   <th>Data Criação</th>
                   <th>Data Atualização</th>
@@ -33,15 +32,14 @@
                   <td>{{ user.id }}</td>
                   <td>{{ user.name }}</td>
                   <td>{{ user.email }}</td>
-                  <td>{{ user.status | statusUsuario }}</td>
                   <td>{{ user.tipo | upText}}</td>
                   <td>{{ user.created_at | formatData}}</td>
                   <td>{{ user.updated_at | formatData}}</td>
                   <td>
-                    <a href="#" class>
+                    <a href="#" @click="editModal(user)">
                       <i class="fa fa-edit blue"></i>
                     </a>
-                    <a href="#" class>
+                    <a href="#" @click="deleteUser(user.id)">
                       <i class="fa fa-trash red"></i>
                     </a>
                   </td>
@@ -67,12 +65,13 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="novoUsuarioLabel">Adicionar Novo Usuário</h5>
+            <h5 v-if="editMode" class="modal-title" id="novoUsuarioLabel">Atualizar Usuário</h5>
+            <h5 v-else class="modal-title" id="novoUsuarioLabel">Adicionar Novo Usuário</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form @submit.prevent="criarUsuario">
+          <form @submit.prevent="editMode ? updateUser(): createUser()">
             <div class="modal-body">
               <div class="form-group">
                 <label for="name">Nome</label>
@@ -95,7 +94,7 @@
               <div class="form-group">
                 <label for="tipo">Tipo</label>
                 <select class="custom-select" id="tipo" name="tipo" v-model="fields.tipo">
-                  <option selected>Selecione...</option>
+                  <option value selected>Selecione...</option>
                   <option value="admin">Administrador</option>
                   <option value="default">Padrão</option>
                   <option value="gerente">Contrato</option>
@@ -117,13 +116,17 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">
+              <button  type="button" class="btn btn-danger" data-dismiss="modal">
                 Close
                 <i class="fas fa-times"></i>
               </button>
-              <button type="submit" class="btn btn-primary">
+              <button v-if="editMode" type="submit" class="btn btn-success">
+                Atualizar Usuário
+                <i class="fas fa-user-edit"></i>
+              </button>
+              <button v-else type="submit" class="btn btn-success">
                 Criar Usuário
-                <i class="fas fa-user-plus fa fw"></i>
+                <i class="fas fa-user-plus"></i>
               </button>
             </div>
           </form>
@@ -138,18 +141,10 @@ export default {
   created() {
     this.$Progress.start();
     this.carregarUsuarios();
-    
-    Toast.fire({
-      icon: 'success',
-      title: 'Lista de Usuários Carregada com Sucesso !'
-    })
-
-    this.$Progress.finish();
-
-
   },
   data() {
     return {
+      editMode: false,
       fields: {},
       users: {},
       errors: {},
@@ -159,14 +154,74 @@ export default {
     };
   },
   methods: {
+    editModal(user) {
+      this.loaded = true;
+      this.errors = {};
+      this.success = false;
+      this.fields = {}; //Clear input fields.
+      this.editMode = true;
+      this.fields = user;
+      $("#novoUsuario").modal("show");
+    },
+    newModal() {
+      this.editMode = false;
+      this.fields = {}; //Clear input fields.
+      this.loaded = true;
+      this.success = true;
+      this.errors = {};
+      $("#novoUsuario").modal("show");
+    },
+    deleteUser(id) {
+      swal
+        .fire({
+          title: "você tem certeza?",
+          text: "Está ação não poderá ser revertida!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sim, deletar!",
+          cancelButtonText: "Cancelar!"
+        })
+        .then(result => {
+          if (result.value) {
+            //send request to the server
+            axios
+              .delete("api/user/" + id)
+              .then(response => {
+                swal.fire(
+                  "Deletado!",
+                  "Usuário deletado com sucesso!",
+                  "success"
+                );
+                this.carregarUsuarios();
+              })
+              .catch(error => {
+                swal.fire("Falha!", "Problema ao deletar o usuário", "error");
+              });
+          }
+        });
+    },
     carregarUsuarios() {
       axios
         .get("api/user")
-        .then(({ data }) => (this.users = data.data))
-        .catch(error => {});
+        .then(
+          ({ data }) => (
+            (this.users = data.data)
+
+          ),
+          this.$Progress.finish()
+        )
+        .catch(error => {
+          Toast.fire({
+            icon: "error",
+            title: "Falha Ao Carregar Lista De Usuários!"
+          }),
+            this.$Progress.fail();
+        });
     },
 
-    criarUsuario() {
+    createUser() {
       if (this.loaded) {
         this.$Progress.start();
 
@@ -179,15 +234,14 @@ export default {
             this.fields = {}; //Clear input fields.
             this.loaded = true;
             this.success = true;
-            $('#novoUsuario').modal('hide');
+            $("#novoUsuario").modal("hide");
             Toast.fire({
-              icon: 'success',
-              title: 'Usuário Criado com Sucesso !'
-            })
+              icon: "success",
+              title: "Usuário Atualizado com Sucesso !"
+            });
 
             this.$Progress.finish();
             this.carregarUsuarios();
-      
           })
           .catch(error => {
             this.loaded = true;
@@ -195,14 +249,49 @@ export default {
               this.errors = error.response.data.errors || {};
             }
             Toast.fire({
-              icon: 'error',
-              title: 'Ops houve um problema no formulário, tente novamente!'
-            })
+              icon: "error",
+              title: "Ops Houve Um Problema No Formulário, Tente Novamente!"
+            });
 
-            this.$Progress.fail()
-
+            this.$Progress.fail();
           });
+      }
+    },
+    updateUser(id) {
+      if (this.loaded) {
+        this.$Progress.start();
 
+        this.loaded = false;
+        this.success = false;
+        this.errors = {};
+        axios
+          .put("api/user/" + this.fields.id, this.fields)
+          .then(response => {
+            this.fields = {}; //Clear input fields.
+            this.loaded = true;
+            this.success = true;
+            $("#novoUsuario").modal("hide");
+            Toast.fire({
+              icon: "success",
+              title: "Usuário Criado com Sucesso !"
+            });
+
+            this.$Progress.finish();
+            this.carregarUsuarios();
+          })
+          .catch(error => {
+            this.loaded = true;
+            this.success = false;
+            if (error.response.status === 422) {
+              this.errors = error.response.data.errors || {};
+            }
+            Toast.fire({
+              icon: "error",
+              title: "Ops Houve Um Problema No Formulário, Tente Novamente!"
+            });
+
+            this.$Progress.fail();
+          });
       }
     }
   }

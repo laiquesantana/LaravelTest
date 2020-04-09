@@ -63,6 +63,7 @@ Vue.use(IconsPlugin)
 
 let routes = [
     { path: '/dashboard', component: require('./components/Dashboard.vue').default },
+    { path: '/developer', component: require('./components/Developer.vue').default },
     { path: '/profile', component: require('./components/Profile.vue').default },
     { path: '/users', component: require('./components/Users.vue').default }
   ]
@@ -73,11 +74,6 @@ let routes = [
 Vue.filter('upText', function(text) {
     return  text === null ? 'Não Informado': text.charAt(0).toUpperCase()+ text.slice(1) ;
 });
-
-Vue.filter('statusUsuario', function(status) {
-    return  status === 1 ? 'Ativo': 'Inativo' ;
-});
-
 
 Vue.filter('formatData', function(data) {
     return moment(data).format('LLL');   
@@ -102,6 +98,20 @@ const router = new VueRouter({
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
+Vue.component(
+  'passport-clients',
+  require('./components/passport/Clients.vue').default
+);
+
+Vue.component(
+  'passport-authorized-clients',
+  require('./components/passport/AuthorizedClients.vue').default
+);
+
+Vue.component(
+  'passport-personal-access-tokens',
+  require('./components/passport/PersonalAccessTokens.vue').default
+);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

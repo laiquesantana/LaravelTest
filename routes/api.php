@@ -18,5 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//best pratice to route protected, avoid use middleware in controller you may forget
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::apiResources([
+        'user' => 'API\UserController'
+    ]);
+});
 
-Route::apiResource('user', 'API\UserController');

@@ -94,12 +94,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <p>Usuários</p>
                 </router-link>
               </li>
-              <li class="nav-item">
-                <router-link to="/users" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Inactive Page</p>
-                </router-link>
-              </li>
             </ul>
           </li>
           <!-- /.profile -->
@@ -112,6 +106,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </router-link>
           </li>
           <!-- /.profile -->
+
+          <!-- /.Desenvolvedor -->
+          <li class="nav-item">
+            <router-link to="/developer" class="nav-link">
+            <i class="nav-icon fas fa-cogs yellow"></i>
+              <p>
+                Desenvolvedor
+              </p>
+            </router-link>
+          </li>
+          <!-- /.Desenvolvedor -->
 
           <li class="nav-item">
               <a class="nav-link" href="{{ route('logout') }}"

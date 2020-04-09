@@ -6,10 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
+
     /**
      * Display a listing of the resource.
      *
@@ -28,13 +32,12 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
-        
+
         $data = $request->validated();
 
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'status' => 1,
             'tipo' => $data['tipo'],
             'password' => Hash::make($data['password']),
         ]);
@@ -60,7 +63,27 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        DB::beginTransaction();
+
+        try {
+
+            $user = User::findOrFail($id);
+
+            $data = $this->validate($request, [
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+                'tipo' => 'required',
+                'password' => 'sometimes|string|min:8',
+            ]);
+
+            $user->update($data);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+
+            throw $th;
+        }
     }
 
     /**
@@ -69,8 +92,15 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+
+        try {
+            $user->delete();
+
+            return true;
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 }
