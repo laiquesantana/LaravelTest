@@ -54,6 +54,14 @@ class UserController extends Controller
         //
     }
 
+
+
+    public function getUserProfile()
+    {
+        return auth('api')->user();
+    }
+
+
     /**
      * Update the specified resource in storage.
      *
@@ -70,12 +78,20 @@ class UserController extends Controller
 
             $user = User::findOrFail($id);
 
+         
+
             $data = $this->validate($request, [
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
                 'tipo' => 'required',
+                'photo' => 'sometimes',
                 'password' => 'sometimes|string|min:8',
             ]);
+
+            if(isset($data['password'])){
+
+                $data['password'] = Hash::make($data['password']);
+            }
 
             $user->update($data);
             DB::commit();

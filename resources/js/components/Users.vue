@@ -30,7 +30,7 @@
               <tbody>
                 <tr v-for="user in users" :key="user.id">
                   <td>{{ user.id }}</td>
-                  <td>{{ user.name }}</td>
+                  <td>{{ user.name | upText}}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.tipo | upText}}</td>
                   <td>{{ user.created_at | formatData}}</td>
@@ -117,7 +117,7 @@
             </div>
             <div class="modal-footer">
               <button  type="button" class="btn btn-danger" data-dismiss="modal">
-                Close
+                Cancelar
                 <i class="fas fa-times"></i>
               </button>
               <button v-if="editMode" type="submit" class="btn btn-success">
@@ -257,7 +257,7 @@ export default {
           });
       }
     },
-    updateUser(id) {
+    updateUser() {
       if (this.loaded) {
         this.$Progress.start();
 
@@ -273,7 +273,7 @@ export default {
             $("#novoUsuario").modal("hide");
             Toast.fire({
               icon: "success",
-              title: "Usuário Criado com Sucesso !"
+              title: "Usuário Atualizado com Sucesso !"
             });
 
             this.$Progress.finish();

@@ -23,5 +23,10 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::apiResources([
         'user' => 'API\UserController'
     ]);
+
+    // get user profile
+    Route::get('profile', 'API\UserController@getUserProfile');
+
+
 });
 
