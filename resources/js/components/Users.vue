@@ -19,6 +19,7 @@
               <thead>
                 <tr>
                   <th>Nome</th>
+                  <th>CPF</th>
                   <th>Email</th>
                   <th>Tipo</th>
                   <th>Data Criação</th>
@@ -29,6 +30,7 @@
               <tbody>
                 <tr v-for="user in users" :key="user.id">
                   <td>{{ user.name | upText}}</td>
+                  <td>{{ user.cpf | VMask('###.###.###-##') }}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.tipo | upText}}</td>
                   <td>{{ user.created_at | formatData}}</td>
@@ -82,7 +84,14 @@
 
               <div class="form-group">
                 <label for="cpf">CPF</label>
-                <input type="text" class="form-control" name="cpf" id="cpf" maxlength="11" v-model="fields.cpf" />
+                <input
+                  type="text"
+                  class="form-control"
+                  name="cpf"
+                  id="cpf"
+                  maxlength="11"
+                  v-model="fields.cpf"
+                />
                 <div v-if="errors && errors.cpf" class="text-danger">{{ errors.cpf[0] }}</div>
               </div>
 
@@ -145,19 +154,22 @@
 
 <script>
 export default {
+
   created() {
     this.$Progress.start();
     this.carregarUsuarios();
   },
+
   data() {
     return {
       editMode: false,
-      fields: {},
+      fields: [],
       users: {},
       errors: {},
       success: false,
       loaded: true,
-      action: "/api/user"
+      action: "/api/user",
+
     };
   },
   methods: {
@@ -165,9 +177,12 @@ export default {
       this.loaded = true;
       this.errors = {};
       this.success = false;
-      this.fields = {}; //Clear input fields.
+      this.fields = {
+
+      }; //Clear input fields.
       this.editMode = true;
-      this.fields = user;
+      this.fields  =  {...user};
+
       $("#novoUsuario").modal("show");
     },
     newModal() {
@@ -266,7 +281,7 @@ export default {
         this.success = false;
         this.errors = {};
         axios
-          .put("api/user/" + this.fields.id, this.fields)
+          .put("api/user/" + this.fields.id,  this.fields)
           .then(response => {
             this.fields = {}; //Clear input fields.
             this.loaded = true;

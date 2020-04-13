@@ -29,6 +29,7 @@ class UserRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'tipo' => ['required'],
             'password' => ['required', 'string', 'min:8'],
+            'cpf' => ['required','cpf','unique:users']
         ];
     }
 

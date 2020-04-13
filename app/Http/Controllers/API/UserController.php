@@ -39,6 +39,7 @@ class UserController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'tipo' => $data['tipo'],
+            'cpf' => $data['cpf'],
             'orgao_id' => Auth::user()->orgao_id,
             'password' => Hash::make($data['password']),
         ]);
@@ -81,6 +82,7 @@ class UserController extends Controller
 
             $user = User::findOrFail($id);
 
+
             $request['cpf'] = str_replace(['.','-'], '', $request->input('cpf'));
 
             $data = $this->validate($request, [
@@ -89,7 +91,7 @@ class UserController extends Controller
                 'tipo' => 'sometimes',
                 'photo' => 'sometimes',
                 'password' => 'sometimes|string|min:8',
-                'cpf' => 'required|max:11|unique:users,cpf,'.$user->id
+                'cpf' => 'required|cpf|unique:users,cpf,'.$user->id
             ]);
 
             if(isset($data['password'])){

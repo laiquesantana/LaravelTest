@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('photo')->nullable();
             $table->enum('tipo',['admin','default','gerente'])->nullable();
             $table->string('email')->unique();
-            $table->string('cpf',11)->unique()->nullable();
+            $table->string('cpf',11)->unique();
             $table->unsignedBigInteger('orgao_id');
             $table->foreign('orgao_id')->references('id')->on('orgao');
             $table->timestamp('email_verified_at')->nullable();

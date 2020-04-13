@@ -13,7 +13,9 @@ import VueProgressBar from 'vue-progressbar';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import VueTheMask from 'vue-the-mask'
-
+import VueMask from 'v-mask'
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
 
 
 moment.locale('pt-br');     
@@ -54,6 +56,7 @@ const Toast = Swal.mixin({
 
 window.Toast = Toast;
 Vue.use(VueProgressBar, options)
+Vue.use(VueMask);
 
 Vue.use(Toasted)
 Vue.use(VueRouter)
@@ -62,9 +65,12 @@ Vue.use(Vuex)
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+Vue.use(Vuetify)
 
 Vue.use(VueTheMask)
+const opts = {}
 
+export default new Vuetify(opts)
 let routes = [
     { path: '/dashboard', component: require('./components/Dashboard.vue').default },
     { path: '/developer', component: require('./components/Developer.vue').default },
