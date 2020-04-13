@@ -39,6 +39,7 @@ class UserController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'tipo' => $data['tipo'],
+            'orgao_id' => Auth::user()->orgao_id,
             'password' => Hash::make($data['password']),
         ]);
     }
@@ -49,16 +50,18 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        dd($user);
     }
 
 
 
     public function getUserProfile()
     {
-        return auth('api')->user();
+        $user =  auth('api')->user();
+
+        return $user->makeHidden('tipo','orgao_id','');
     }
 
 
@@ -78,14 +81,15 @@ class UserController extends Controller
 
             $user = User::findOrFail($id);
 
-         
+            $request['cpf'] = str_replace(['.','-'], '', $request->input('cpf'));
 
             $data = $this->validate($request, [
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-                'tipo' => 'required',
+                'tipo' => 'sometimes',
                 'photo' => 'sometimes',
                 'password' => 'sometimes|string|min:8',
+                'cpf' => 'required|max:11|unique:users,cpf,'.$user->id
             ]);
 
             if(isset($data['password'])){

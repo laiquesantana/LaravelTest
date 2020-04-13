@@ -21,6 +21,12 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/{component?}', function () {
-    return view('home');
-})->where('component', '[\/\w\.-]*');
+
+Route::group(['middleware' => 'auth'], function() {
+    
+    Route::get('/{component?}', function () {
+        return view('home');
+    })->where('component', '[\/\w\.-]*');
+
+});
+

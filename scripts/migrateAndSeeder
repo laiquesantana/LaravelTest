@@ -1,0 +1,9 @@
+
+#!/bin/bash
+# reload tables
+php artisan migrate:fresh
+# run seed to populate user's and tenant's tables
+php artisan db:seed
+# run passaport to generate key to consume own api
+php artisan passport:install --force
+

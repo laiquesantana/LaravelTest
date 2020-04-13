@@ -18,7 +18,6 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Nome</th>
                   <th>Email</th>
                   <th>Tipo</th>
@@ -29,13 +28,15 @@
               </thead>
               <tbody>
                 <tr v-for="user in users" :key="user.id">
-                  <td>{{ user.id }}</td>
                   <td>{{ user.name | upText}}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.tipo | upText}}</td>
                   <td>{{ user.created_at | formatData}}</td>
                   <td>{{ user.updated_at | formatData}}</td>
                   <td>
+                    <a href="#" @click="showUser(user.id)">
+                      <i class="fa fa-eye cyan"></i>
+                    </a>
                     <a href="#" @click="editModal(user)">
                       <i class="fa fa-edit blue"></i>
                     </a>
@@ -80,6 +81,12 @@
               </div>
 
               <div class="form-group">
+                <label for="cpf">CPF</label>
+                <input type="text" class="form-control" name="cpf" id="cpf" maxlength="11" v-model="fields.cpf" />
+                <div v-if="errors && errors.cpf" class="text-danger">{{ errors.cpf[0] }}</div>
+              </div>
+
+              <div class="form-group">
                 <label for="email">E-mail</label>
                 <input
                   type="email"
@@ -116,7 +123,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button  type="button" class="btn btn-danger" data-dismiss="modal">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
                 Cancelar
                 <i class="fas fa-times"></i>
               </button>
@@ -205,13 +212,7 @@ export default {
     carregarUsuarios() {
       axios
         .get("api/user")
-        .then(
-          ({ data }) => (
-            (this.users = data.data)
-
-          ),
-          this.$Progress.finish()
-        )
+        .then(({ data }) => (this.users = data.data), this.$Progress.finish())
         .catch(error => {
           Toast.fire({
             icon: "error",
@@ -288,6 +289,40 @@ export default {
             Toast.fire({
               icon: "error",
               title: "Ops Houve Um Problema No Formulário, Tente Novamente!"
+            });
+
+            this.$Progress.fail();
+          });
+      }
+    },
+
+    showUser(id) {
+      if (this.loaded) {
+        this.$Progress.start();
+
+        this.loaded = false;
+        this.success = false;
+        this.errors = {};
+        axios
+          .get("api/user/" + id)
+          .then(response => {
+            this.fields = {}; //Clear input fields.
+            this.loaded = true;
+            this.success = true;
+            Toast.fire({
+              icon: "warning",
+              title: "Método Show em desenvolvimento  !"
+            });
+
+            this.$Progress.finish();
+          })
+          .catch(error => {
+            this.loaded = true;
+            this.success = false;
+
+            Toast.fire({
+              icon: "error",
+              title: "Ops Houve Um Problema, Tente Novamente!"
             });
 
             this.$Progress.fail();

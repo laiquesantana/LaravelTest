@@ -12,6 +12,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import VueProgressBar from 'vue-progressbar';
 import moment from 'moment';
 import Swal from 'sweetalert2';
+import VueTheMask from 'vue-the-mask'
+
 
 
 moment.locale('pt-br');     
@@ -61,6 +63,8 @@ Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 
+Vue.use(VueTheMask)
+
 let routes = [
     { path: '/dashboard', component: require('./components/Dashboard.vue').default },
     { path: '/developer', component: require('./components/Developer.vue').default },
@@ -96,7 +100,7 @@ const router = new VueRouter({
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('dashboard-component', require('./components/Dashboard.vue').default);
 
 Vue.component(
   'passport-clients',

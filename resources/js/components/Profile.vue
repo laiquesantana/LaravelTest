@@ -96,6 +96,19 @@
                     </div>
 
                     <div class="form-group">
+                      <label for="cpf">CPF</label>
+                      <input
+                        type="tel"
+                        class="form-control"
+                        name="cpf"
+                        id="cpf"
+                        v-mask="'###.###.###-##'"
+                        v-model="fields.cpf"
+                      />
+                      <div v-if="errors && errors.cpf" class="text-danger">{{ errors.cpf[0] }}</div>
+                    </div>
+
+                    <div class="form-group">
                       <label for="email">E-mail</label>
                       <input
                         type="email"
@@ -117,17 +130,6 @@
                         @change="updateProfile"
                       />
                       <div v-if="errors && errors.photo" class="text-danger">{{ errors.photo[0] }}</div>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="tipo">Tipo</label>
-                      <select class="custom-select" id="tipo" name="tipo" v-model="fields.tipo">
-                        <option value selected>Selecione...</option>
-                        <option value="admin">Administrador</option>
-                        <option value="default">Padrão</option>
-                        <option value="gerente">Contrato</option>
-                      </select>
-                      <div v-if="errors && errors.tipo" class="text-danger">{{ errors.tipo[0] }}</div>
                     </div>
 
                     <div class="form-group">
@@ -169,93 +171,92 @@
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-            fields: {},
-            errors: {},
-            success: false,
-            loaded: true,
-            };
-        },
-        mounted() {
-            console.log("Component mounted.");
-        },
-
-        created() {
-          this.loadProfile();
-        },
-
-        methods: {
-            loadProfile(){
-                this.$Progress.start()
-                    axios
-                    .get("api/profile")
-                    .then(({ data }) => (this.fields = data), this.$Progress.finish())
-                    .catch(error => {
-                        Toast.fire({
-                            icon: "error",
-                            title: "Falha Ao Carregar Perfil Do Usuários!"
-                        }),
-                        this.$Progress.fail();
-                    });
-            }
-            ,
-            updateUser() {
-            if (this.loaded) {
-                this.$Progress.start();
-
-                this.loaded = false;
-                this.success = false;
-                this.errors = {};
-                axios
-                .put("api/user/" + this.fields.id, this.fields)
-                .then(response => {
-                    this.loaded = true;
-                    this.success = true;
-                    $("#novoUsuario").modal("hide");
-                    Toast.fire({
-                        icon: "success",
-                        title: "Perfil Atualizado com Sucesso !"
-                    });
-                    this.loadProfile();
-                    this.$Progress.finish();
-                })
-                .catch(error => {
-                    this.loaded = true;
-                    this.success = false;
-                    if (error.response.status === 422) {
-                        this.errors = error.response.data.errors || {};
-                    }
-                    Toast.fire({
-                        icon: "error",
-                        title: "Ops Houve Um Problema No Formulário, Tente Novamente!"
-                    });
-
-                    this.$Progress.fail();
-                });
-            }
-            },
-            updateProfile(e) {
-                console.log('updateProfile')
-                let file = e.target.files[0];
-                let reader = new FileReader();
-                let limit = 1024 * 1024 * 2;
-            if (file["size"] > limit) {
-                swal({
-                type: "error",
-                title: "Oops...",
-                text: "Tamanho do arquivo acima do permitido!"
-                });
-                return false;
-            }
-            reader.onloadend = file => {
-                this.fields.photo = reader.result;
-            };
-            reader.readAsDataURL(file);
-            }
-        }
+export default {
+  data() {
+    return {
+      fields: {},
+      errors: {},
+      success: false,
+      loaded: true
     };
+  },
+  mounted() {
+    console.log("Component mounted.");
+  },
+
+  created() {
+    this.loadProfile();
+  },
+
+  methods: {
+    loadProfile() {
+      this.$Progress.start();
+      axios
+        .get("api/profile")
+        .then(({ data }) => (this.fields = data), this.$Progress.finish())
+        .catch(error => {
+          Toast.fire({
+            icon: "error",
+            title: "Falha Ao Carregar Perfil Do Usuários!"
+          }),
+            this.$Progress.fail();
+        });
+    },
+    updateUser() {
+      if (this.loaded) {
+        this.$Progress.start();
+
+        this.loaded = false;
+        this.success = false;
+        this.errors = {};
+        axios
+          .put("api/user/" + this.fields.id, this.fields)
+          .then(response => {
+            this.loaded = true;
+            this.success = true;
+            $("#novoUsuario").modal("hide");
+            Toast.fire({
+              icon: "success",
+              title: "Perfil Atualizado com Sucesso !"
+            });
+            this.loadProfile();
+            this.$Progress.finish();
+          })
+          .catch(error => {
+            this.loaded = true;
+            this.success = false;
+            if (error.response.status === 422) {
+              this.errors = error.response.data.errors || {};
+            }
+            Toast.fire({
+              icon: "error",
+              title: "Ops Houve Um Problema No Formulário, Tente Novamente!"
+            });
+
+            this.$Progress.fail();
+          });
+      }
+    },
+    updateProfile(e) {
+      console.log("updateProfile");
+      let file = e.target.files[0];
+      let reader = new FileReader();
+      let limit = 1024 * 1024 * 2;
+      if (file["size"] > limit) {
+        swal({
+          type: "error",
+          title: "Oops...",
+          text: "Tamanho do arquivo acima do permitido!"
+        });
+        return false;
+      }
+      reader.onloadend = file => {
+        this.fields.photo = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+};
 </script>
 
 
