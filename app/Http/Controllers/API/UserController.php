@@ -13,6 +13,19 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
 
+        /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+       
+        $this->middleware('auth:api');
+
+    }
+
+
 
     /**
      * Display a listing of the resource.
@@ -21,9 +34,28 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::latest()->paginate(10);
+
+        return User::latest()->paginate(5);
     }
 
+
+    public function search(Request $request){
+
+        $search = $request->only('query');
+        if (!is_null($search['query'])) {
+            $users = User::where(function($query) use ($search){
+                $query->where('name','like','%'.$search['query'].'%')
+                ->orWhere('email','like','%'.$search['query'].'%')
+                ->orWhere('tipo','like','%'.$search['query'].'%');
+              
+            })->paginate(5);
+        }else{
+            $users = User::latest()->paginate(5);
+        }
+
+        return $users;
+
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -58,13 +90,6 @@ class UserController extends Controller
 
 
 
-    public function getUserProfile()
-    {
-        $user =  auth('api')->user();
-
-        return $user->makeHidden('tipo','orgao_id','');
-    }
-
 
     /**
      * Update the specified resource in storage.
@@ -89,13 +114,12 @@ class UserController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
                 'tipo' => 'sometimes',
-                'photo' => 'sometimes',
                 'password' => 'sometimes|string|min:8',
                 'cpf' => 'required|cpf|unique:users,cpf,'.$user->id
             ]);
 
-            if(isset($data['password'])){
-
+            
+            if(!empty($data['password'])){
                 $data['password'] = Hash::make($data['password']);
             }
 
@@ -117,6 +141,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
 
+     
         try {
             $user->delete();
 

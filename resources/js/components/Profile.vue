@@ -24,10 +24,10 @@
             style="background-image:url('./img/user-cover.jpg')"
           >
             <h3 class="widget-user-username text-left">{{this.fields.name }}</h3>
-            <h5 class="widget-user-desc text-left mt-1">{{this.fields.tipo }}</h5>
+            <h5 class="widget-user-desc text-left">{{$gate.getType() }}</h5>
           </div>
           <div class="widget-user-image">
-            <img class="img-circle" src alt="User Avatar" />
+            <img class="img-circle" :src="getProfilePhoto()" alt="User Avatar" />
           </div>
           <div class="card-footer">
             <div class="row">
@@ -65,20 +65,16 @@
           <div class="card-header p-2">
             <ul class="nav nav-pills">
               <li class="nav-item">
-                <a class="nav-link" href="#activity" data-toggle="tab">Activity</a>
+                <a class="nav-link active show" href="#settings" data-toggle="tab">Dados Pessoais</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active show" href="#settings" data-toggle="tab">Settings</a>
+                <a class="nav-link" href="#activity" data-toggle="tab">Alterar Senha</a>
               </li>
             </ul>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
             <div class="tab-content">
-              <!-- Activity Tab -->
-              <div class="tab-pane" id="activity">
-                <h3 class="text-center">Display User Activity</h3>
-              </div>
               <!-- Setting Tab -->
               <div class="tab-pane active show" id="settings">
                 <form @submit.prevent="updateUser()" class="form-horizontal">
@@ -91,6 +87,7 @@
                         name="name"
                         id="name"
                         v-model="fields.name"
+                        required
                       />
                       <div v-if="errors && errors.name" class="text-danger">{{ errors.name[0] }}</div>
                     </div>
@@ -104,6 +101,7 @@
                         id="cpf"
                         v-mask="'###.###.###-##'"
                         v-model="fields.cpf"
+                        required
                       />
                       <div v-if="errors && errors.cpf" class="text-danger">{{ errors.cpf[0] }}</div>
                     </div>
@@ -116,6 +114,7 @@
                         name="email"
                         id="email"
                         v-model="fields.email"
+                        required
                       />
                       <div v-if="errors && errors.email" class="text-danger">{{ errors.email[0] }}</div>
                     </div>
@@ -127,25 +126,9 @@
                         class="form-control"
                         name="photo"
                         id="photo"
-                        @change="updateProfile"
+                        @change="updatePhotoProfile"
                       />
                       <div v-if="errors && errors.photo" class="text-danger">{{ errors.photo[0] }}</div>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="password">Senha</label>
-                      <input
-                        type="password"
-                        class="form-control"
-                        name="password"
-                        autocomplete="on"
-                        id="password"
-                        v-model="fields.password"
-                      />
-                      <div
-                        v-if="errors && errors.password"
-                        class="text-danger"
-                      >{{ errors.password[0] }}</div>
                     </div>
 
                     <div class="form-group">
@@ -154,6 +137,67 @@
                         <i class="fas fa-user-edit"></i>
                       </button>
                     </div>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Password Tab -->
+              <div class="tab-pane" id="activity">
+                <form @submit.prevent="updateUserPassword()" class="form-horizontal">
+                  <div class="form-group">
+                    <label for="password">Senha Atual</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      name="senha_atual"
+                      autocomplete="senha_atual"
+                      id="senha_atual"
+                      required
+                      v-model="PasswordFields.senha_atual"
+                    />
+                    <div
+                      v-if="errors && errors.senha_atual"
+                      class="text-danger"
+                    >{{ errors.senha_atual[0] }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Nova senha</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      name="nova_senha"
+                      autocomplete="senha_atual"
+                      id="nova_senha"
+                      required
+                      v-model="PasswordFields.nova_senha"
+                    />
+                    <div
+                      v-if="errors && errors.nova_senha"
+                      class="text-danger"
+                    >{{ errors.new_password[0] }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Confirme a nova senha</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      name="nova_senha_confirmada"
+                      autocomplete="senha_atual"
+                      id="nova_senha_confirmada"
+                      required
+                      v-model="PasswordFields.nova_senha_confirmada"
+                    />
+                    <div
+                      v-if="errors && errors.nova_senha_confirmada"
+                      class="text-danger"
+                    >{{ errors.nova_senha_confirmada[0] }}</div>
+                  </div>
+
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-success">
+                      Atualizar Senha
+                      <i class="fas fa-user-edit"></i>
+                    </button>
                   </div>
                 </form>
               </div>
@@ -174,21 +218,28 @@
 export default {
   data() {
     return {
+      photoChanged: false,
       fields: {},
       errors: {},
+      PasswordFields: {},
       success: false,
       loaded: true
     };
   },
-  mounted() {
-    console.log("Component mounted.");
-  },
+  mounted() {},
 
   created() {
     this.loadProfile();
   },
 
   methods: {
+    getProfilePhoto() {
+      if (!this.photoChanged) {
+        return "img/profile/" + this.fields.photo;
+      } else {
+        return this.fields.photo;
+      }
+    },
     loadProfile() {
       this.$Progress.start();
       axios
@@ -205,21 +256,21 @@ export default {
     updateUser() {
       if (this.loaded) {
         this.$Progress.start();
-
-        this.loaded = false;
+        this.loaded = true;
         this.success = false;
         this.errors = {};
+        if (this.fields.password == "") {
+          this.fields.password = undefined;
+        }
         axios
-          .put("api/user/" + this.fields.id, this.fields)
+          .put("api/profile/", this.fields)
           .then(response => {
             this.loaded = true;
             this.success = true;
-            $("#novoUsuario").modal("hide");
             Toast.fire({
               icon: "success",
               title: "Perfil Atualizado com Sucesso !"
             });
-            this.loadProfile();
             this.$Progress.finish();
           })
           .catch(error => {
@@ -237,16 +288,47 @@ export default {
           });
       }
     },
-    updateProfile(e) {
-      console.log("updateProfile");
+    updateUserPassword() {
+      if (this.loaded) {
+        this.$Progress.start();
+        this.loaded = true;
+        this.success = false;
+        this.errors = {};
+        axios
+          .post("api/change-password/", this.PasswordFields)
+          .then(response => {
+            this.loaded = true;
+            this.success = true;
+            Toast.fire({
+              icon: "success",
+              title: "Senha Atualizada com Sucesso !"
+            });
+            (this.PasswordFields = {}), this.$Progress.finish();
+          })
+          .catch(error => {
+            this.loaded = true;
+            this.success = false;
+            if (error.response.status === 422) {
+              this.errors = error.response.data.errors || {};
+            }
+            Toast.fire({
+              icon: "error",
+              title: "Ops Houve Um Problema No Formulário, Tente Novamente!"
+            });
+
+            this.$Progress.fail();
+          });
+      }
+    },
+    updatePhotoProfile(e) {
       let file = e.target.files[0];
       let reader = new FileReader();
       let limit = 1024 * 1024 * 2;
+
       if (file["size"] > limit) {
-        swal({
-          type: "error",
-          title: "Oops...",
-          text: "Tamanho do arquivo acima do permitido!"
+        swal.fire({
+          icon: "error",
+          title: "Tamanho da imagem acima do permitido!"
         });
         return false;
       }
@@ -254,6 +336,7 @@ export default {
         this.fields.photo = reader.result;
       };
       reader.readAsDataURL(file);
+      this.photoChanged = true;
     }
   }
 };

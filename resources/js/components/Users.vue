@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row mt-5">
+    <div class="row mt-5" v-if="$gate.isAdminOrGerente()">
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
@@ -28,7 +28,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="user in users" :key="user.id">
+                <tr v-for="user in users.data" :key="user.id">
                   <td>{{ user.name | upText}}</td>
                   <td>{{ user.cpf | VMask('###.###.###-##') }}</td>
                   <td>{{ user.email }}</td>
@@ -51,6 +51,12 @@
             </table>
           </div>
           <!-- /.card-body -->
+          <div class="card-footer">
+            <pagination :data="users" @pagination-change-page="getResults" :limit="1">
+              <span slot="prev-nav">&lt; Anterior</span>
+              <span slot="next-nav">Próximo &gt;</span>
+            </pagination>
+          </div>
         </div>
         <!-- /.card -->
       </div>
@@ -149,15 +155,31 @@
         </div>
       </div>
     </div>
+    <div v-if="!$gate.isAdminOrGerente()">
+      <not-found></not-found>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-
   created() {
+    Fire.$on("searching", () => {
+      let query = this.$parent.search;
+      axios
+        .get("api/findUser?query=" + query)
+        .then(data => {
+          console.log(data);
+          this.users = data.data;
+        })
+        .catch(() => {});
+    });
     this.$Progress.start();
     this.carregarUsuarios();
+  },
+  mounted() {
+    // Fetch initial results
+    //	this.getResults();
   },
 
   data() {
@@ -168,20 +190,22 @@ export default {
       errors: {},
       success: false,
       loaded: true,
-      action: "/api/user",
-
+      action: "/api/user"
     };
   },
   methods: {
+    getResults(page = 1) {
+      axios.get("api/user?page=" + page).then(response => {
+        this.users = response.data;
+      });
+    },
     editModal(user) {
       this.loaded = true;
       this.errors = {};
       this.success = false;
-      this.fields = {
-
-      }; //Clear input fields.
+      this.fields = {}; //Clear input fields.
       this.editMode = true;
-      this.fields  =  {...user};
+      this.fields = { ...user };
 
       $("#novoUsuario").modal("show");
     },
@@ -225,16 +249,18 @@ export default {
         });
     },
     carregarUsuarios() {
-      axios
-        .get("api/user")
-        .then(({ data }) => (this.users = data.data), this.$Progress.finish())
-        .catch(error => {
-          Toast.fire({
-            icon: "error",
-            title: "Falha Ao Carregar Lista De Usuários!"
-          }),
-            this.$Progress.fail();
-        });
+      if (this.$gate.isAdminOrGerente()) {
+        axios
+          .get("api/user")
+          .then(({ data }) => (this.users = data), this.$Progress.finish())
+          .catch(error => {
+            Toast.fire({
+              icon: "error",
+              title: "Falha Ao Carregar Lista De Usuários!"
+            }),
+              this.$Progress.fail();
+          });
+      }
     },
 
     createUser() {
@@ -281,7 +307,7 @@ export default {
         this.success = false;
         this.errors = {};
         axios
-          .put("api/user/" + this.fields.id,  this.fields)
+          .put("api/user/" + this.fields.id, this.fields)
           .then(response => {
             this.fields = {}; //Clear input fields.
             this.loaded = true;

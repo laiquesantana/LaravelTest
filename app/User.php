@@ -15,6 +15,15 @@ class User extends Authenticatable
     use Notifiable, SoftDeletes, HasApiTokens;
 
 
+    
+    const admin = 'admin';
+    const padrao = 'default';
+    const gerente = 'gerente';
+    const STATUS_LISTA = [
+        self::admin  => 'Administrador',
+        self::padrao  => 'Usuário Padrão',
+        self::gerente  => 'Secretário',
+    ];
     public $incrementing = false;
 
     protected static function boot()
@@ -34,6 +43,12 @@ class User extends Authenticatable
     public function getKeyType()
     {
         return 'string';
+    }
+
+    
+    public function getTipoUsuario()
+    {
+        return self::STATUS_LISTA[$this->tipo];
     }
 
 

@@ -29,6 +29,24 @@ class AuthServiceProvider extends ServiceProvider
         Passport::routes();
         Passport::cookie('you_shall_not_pass');
 
+        Gate::define('isAdmin',function($user){
+            return $user->tipo === 'admin';
+        });
+        
+        Gate::define('isDefault',function($user){
+            return $user->tipo === 'default';
+        });
+
+        
+        Gate::define('isGerente',function($user){
+            return $user->tipo === 'gerente';
+        });
+
+        Gate::define('isAdminOrGerente',function($user){
+            return ($user->tipo === 'gerente' || $user->tipo === 'admin'  );
+        });
+
+
         Passport::tokensExpireIn(now()->addDays(15));
 
         Passport::refreshTokensExpireIn(now()->addDays(30));
