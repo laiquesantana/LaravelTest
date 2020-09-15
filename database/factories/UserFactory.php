@@ -27,10 +27,6 @@ $factory->define(User::class, function (Faker $faker) {
         'email' => $faker->unique()->safeEmail,
         'email_verified_at' => now(),
         'tipo' => 'admin',
-        'cpf' => $faker->cpf,
-        'orgao_id' => 1,
-        'tenant_id' => 1,
-        'password' =>  bcrypt('010619946463'),
-        'remember_token' => Str::random(10),
+        'password' =>  bcrypt('laravelteste'),
     ];
 });

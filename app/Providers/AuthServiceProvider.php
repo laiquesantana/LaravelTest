@@ -27,7 +27,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Passport::routes();
-        Passport::cookie('you_shall_not_pass');
 
         Gate::define('isAdmin',function($user){
             return $user->tipo === 'admin';

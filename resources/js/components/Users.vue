@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row mt-5" v-if="$gate.isAdminOrGerente()">
+    <div class="row mt-5">
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
@@ -155,9 +155,7 @@
         </div>
       </div>
     </div>
-    <div v-if="!$gate.isAdminOrGerente()">
-      <not-found></not-found>
-    </div>
+  
   </div>
 </template>
 
@@ -249,18 +247,17 @@ export default {
         });
     },
     carregarUsuarios() {
-      if (this.$gate.isAdminOrGerente()) {
         axios
           .get("api/user")
           .then(({ data }) => (this.users = data), this.$Progress.finish())
           .catch(error => {
             Toast.fire({
               icon: "error",
-              title: "Falha Ao Carregar Lista De Usuários!"
+              title: "Fail to load users!"
             }),
               this.$Progress.fail();
           });
-      }
+      
     },
 
     createUser() {

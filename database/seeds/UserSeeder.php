@@ -15,13 +15,10 @@ class UserSeeder extends Seeder
     {
         DB::table('users')->insert([
             'id' => \Str::orderedUuid(),
-            'name' => 'Adminstrador Geral',
-            'email' => 'laiquesantana@gmail.com',
-            'cpf' => '06001814562',
-            'password' => Hash::make('010619946463'),
-            'tenant_id' => 1,
+            'name' => 'General Admin',
+            'email' => 'laravelteste@gmail.com',
+            'password' => Hash::make('laravelteste'),
             'tipo' => 'admin',
-            'orgao_id' => 1,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
 

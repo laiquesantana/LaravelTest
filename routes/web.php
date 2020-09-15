@@ -21,16 +21,10 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-   
-route::get('/invoice', function(){
-    return view('invoice');
-});
+
 
 Route::group(['middleware' => 'auth'], function() {
     route::get('/{any}','HomeController@index')->where(' any', '.*'); 
  
-//     Route::get('/{component?}', function () {
-//         return view('home');
-//     })->where('component', '[\/\w\.-]*');
  });
 
