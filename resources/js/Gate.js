@@ -13,13 +13,10 @@ export default class Gate {
 
         switch (this.user.tipo) {
             case 'admin':
-                return 'Administrador';
-                break;
-            case 'gerente':
-                return 'Secretário'
+                return 'Admin';
                 break;
             default:
-                return 'Usuário Padrão'
+                return 'Default User'
                 break;
         }
 
@@ -28,14 +25,8 @@ export default class Gate {
     isDefault() {
         return this.user.tipo === 'default';
     }
-    isAdminOrGerente() {
-        if (this.user.tipo === 'admin' || this.user.tipo === 'gerente') {
-            return true;
-        }
-
-    }
-    isGerenteOrDefault() {
-        if (this.user.tipo === 'default' || this.user.tipo === 'gerente') {
+    isAdmin() {
+        if (this.user.tipo === 'admin' ) {
             return true;
         }
 

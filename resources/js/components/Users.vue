@@ -4,17 +4,23 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-header">
-            <b-form-group label="List Of Users" label-cols-lg="2"></b-form-group>
-            <b-form-group label="Search:" label-cols-lg="1">
-              <input
-                class="form-control form-control-navbar"
-                @keyup="searchit"
-                v-model="search"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-            </b-form-group>
+           
+              <b-form-group label="List Of Users" label-cols-lg="2">
+
+              </b-form-group>
+              <b-form-group label="Search:" label-cols-lg="1">
+              
+                <input
+                    class="form-control form-control-navbar"
+                    @keyup="searchit"
+                    v-model="search"
+                    type="search"
+                    placeholder="Search"
+                    aria-label="Search"
+                  />
+              
+              </b-form-group>
+
 
             <div class="card-tools">
               <button class="btn btn-success" @click="newModal">
@@ -150,6 +156,7 @@
 </template>
 
 <script>
+
 export default {
   created() {
     Fire.$on("searching", () => {
@@ -226,15 +233,15 @@ export default {
             axios
               .delete("api/user/" + id)
               .then((response) => {
-                swal.fire("Deleted!", "User successfully deleted!", "success");
+                swal.fire(
+                  "Deleted!",
+                  "User successfully deleted!",
+                  "success"
+                );
                 this.loadUsers();
               })
               .catch((error) => {
-                swal.fire(
-                  "Falha!",
-                  "Oops something went wrong try, again later",
-                  "error"
-                );
+                swal.fire("Falha!", "Oops something went wrong try, again later", "error");
               });
           }
         });
@@ -325,6 +332,7 @@ export default {
           });
       }
     },
+
   },
 };
 </script>

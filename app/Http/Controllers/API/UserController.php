@@ -71,7 +71,6 @@ class UserController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'tipo' => $data['tipo'],
-            'orgao_id' => Auth::user()->orgao_id,
             'password' => Hash::make($data['password']),
         ]);
     }

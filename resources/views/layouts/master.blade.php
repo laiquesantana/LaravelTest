@@ -57,7 +57,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
             <li class="nav-item">
-              <router-link to="/users" class="nav-link">
+              <router-link :to="{ name: 'products' }" class=" nav-link">
                 <i class="nav-icon fas fa-list-alt cyan"></i>
                 <p>
                   List of Products
@@ -77,7 +77,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </a>
               <ul class="nav nav-treeview">
                 <li class="nav-item">
-                  <router-link to="/users" class="nav-link ">
+                  <router-link :to="{ name: 'users' }" class=" nav-link">
                     <i class="fas fa-users"></i>
                     <p>Users</p>
                   </router-link>

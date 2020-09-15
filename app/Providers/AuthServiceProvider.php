@@ -36,14 +36,7 @@ class AuthServiceProvider extends ServiceProvider
             return $user->tipo === 'default';
         });
 
-        
-        Gate::define('isGerente',function($user){
-            return $user->tipo === 'gerente';
-        });
-
-        Gate::define('isAdminOrGerente',function($user){
-            return ($user->tipo === 'gerente' || $user->tipo === 'admin'  );
-        });
+    
 
 
         Passport::tokensExpireIn(now()->addDays(15));
