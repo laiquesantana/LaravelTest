@@ -28,18 +28,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </ul>
 
 
-    <!-- SEARCH FORM -->
-    {{-- <form class="form-inline ml-3"> --}}
-      <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" @keyup="searchit" v-model="search" type="search" placeholder="Search" aria-label="Search">
-        <div class="input-group-append">
-          <button class="btn btn-navbar" @click="searchit">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </div>
-    {{-- </form> --}}
-
   </nav>
   <!-- /.navbar -->
 
@@ -58,7 +46,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
       
         <div class="info">
-          <a href="#" class="d-block">{{ Auth::user()->name }}<span class="d-block text-muted">{{Auth::user()->getTipoUsuario()}} </span></a>
+          <a href="#" class="d-block">{{ Auth::user()->name }}<span class="d-block text-muted">{{Auth::user()->getUserType()}} </span></a>
         </div>
       </div>
 
@@ -81,7 +69,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <a href="#" class="nav-link ">
                 <i class="nav-icon fas fa-cog indigo"></i>
                 <p>
-                  Seetings
+                  Settings
                   <i class="right fas fa-angle-left"></i>
                 </p>
               </a>

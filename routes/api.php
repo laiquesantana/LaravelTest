@@ -30,5 +30,6 @@ Route::group(['middleware' => 'auth:api'], function() {
 
 Route::middleware(['auth:api'])->group(function () {
     Route::apiResource('user', 'API\UserController');
+    Route::apiResource('product', 'API\ProductController');
 });
 

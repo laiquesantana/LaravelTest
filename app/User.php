@@ -18,11 +18,9 @@ class User extends Authenticatable
     
     const admin = 'admin';
     const padrao = 'default';
-    const gerente = 'gerente';
     const STATUS_LISTA = [
-        self::admin  => 'Administrador',
-        self::padrao  => 'Usuário Padrão',
-        self::gerente  => 'Secretário',
+        self::admin  => 'Admin',
+        self::padrao  => 'Default User',
     ];
     public $incrementing = false;
 
@@ -46,7 +44,7 @@ class User extends Authenticatable
     }
 
     
-    public function getTipoUsuario()
+    public function getUserType()
     {
         return self::STATUS_LISTA[$this->tipo];
     }
