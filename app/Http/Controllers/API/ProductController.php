@@ -3,10 +3,25 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+        /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+       
+        $this->middleware('auth:api');
+
+    }
+
+
+
     /**
      * Display a listing of the resource.
      *
@@ -14,8 +29,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+
+        return Product::all();
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -78,8 +95,16 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        //
+        
+        try {
+
+            $product->delete();
+
+            return true;
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 }

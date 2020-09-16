@@ -2,16 +2,18 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Model;
+use App\Product;
 use Faker\Generator as Faker;
 
-$factory->define(Model::class, function (Faker $faker) {
+$factory->define(Product::class, function (Faker $faker) {
+    $faker->addProvider(new \JansenFelipe\FakerBR\FakerBR($faker));
+
     return [
-        'name' => $faker->name,
-        'ref' => $faker->randomElements($array = array ('T','S','G'), $count = 1) . $faker->randomDigit,
-        'category' => now(),
-        'active' => $faker->randomElements($array = array ('Yes','No'), $count = 1),
+        'name' => 'Tshirt',
+        'ref' => 'T001',
+        'category' => 'Tshirt',
+        'active' => 'Yes',
         'quantity' => $faker->randomDigit,
-        'price_ht' =>  $faker->randomFloat,
+        'price_ht' =>  $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 2),
     ];
 });

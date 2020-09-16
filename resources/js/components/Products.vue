@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form class="mt-5" @submit.prevent="mode === 'save' ? save() : update()">
+    <!--  <b-form class="mt-5" @submit.prevent="mode === 'save' ? save() : update()">
   
 
       <b-col xs="12" class="mt-2">
@@ -8,9 +8,42 @@
         <b-button type="submit" variant="success" v-if="mode === 'update'">update</b-button>
         <b-button class="ml-2" @click="reset">Cancelar</b-button>
       </b-col>
-    </b-form>
+    </b-form>-->
+    <h3>Product List</h3>
+    <div class="card-tools pt-5">
+      <button class="btn btn-success" @click>
+        Add a product
+        <i class="fas fa-plus fa-fw"></i>
+      </button>
+    </div>
     <hr />
-
+    <b-card-text>
+      <b-row>
+        <b-col lg="6" class="my-1">
+          <b-form-group
+            label="Search"
+            label-cols-sm="1"
+            label-align-sm="left"
+            label-size="sm"
+            label-for="filterInput"
+            class="mb-1"
+          >
+            <b-input-group size="sm">
+              <b-form-input
+                v-model="filter"
+                label-align-sm="left"
+                type="search"
+                id="filterInput"
+                placeholder="search"
+              ></b-form-input>
+              <b-input-group-append>
+                <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </b-card-text>
     <b-card
       border-variant="primary"
       header="List Of Products"
@@ -19,35 +52,6 @@
       align="center"
       class="mb-1"
     >
-      <b-card-text>
-        <b-row>
-        
-          <b-col lg="6" class="my-1">
-            <b-form-group
-              label="Filtro"
-              label-cols-sm="3"
-              label-align-sm="right"
-              label-size="sm"
-              label-for="filterInput"
-              class="mb-2"
-            >
-              <b-input-group size="sm">
-                <b-form-input
-                  v-model="filter"
-                  label-align-sm="left"
-                  type="search"
-                  id="filterInput"
-                  placeholder="Escreva para buscar"
-                ></b-form-input>
-                <b-input-group-append>
-                  <b-button :disabled="!filter" @click="filter = ''">Limpar</b-button>
-                </b-input-group-append>
-              </b-input-group>
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </b-card-text>
-
       <!-- /.card-header -->
       <div class="card-body table-responsive p-0">
         <b-table
@@ -56,21 +60,62 @@
           striped
           fixed
           bordered
+          head-variant="success"
           :filter="filter"
           :busy.sync="isBusy"
-          :items="Product"
+          :items="product"
           :fields="fields"
           :current-page="currentPage"
           :per-page="perPage"
           @filtered="onFiltered"
         >
           <template v-slot:cell(actions)="data">
-            <b-button variant="outline-success" @click="loadProductModo(data.item)">
-              <b-icon icon="check-box" aria-hidden="true"></b-icon>Editar
-            </b-button>
-            <b-button pill variant="outline-danger" @click="deleteProducts(data.item.id)">
-              <b-icon icon="trash-fill" aria-hidden="true"></b-icon>Excluir
-            </b-button>
+            <div class="btn-group-vertical">
+              <div class="btn-group">
+                <button
+                  type="button"
+                  class="btn btn-info"
+                  data-toggle="dropdown"
+                  aria-expanded="true"
+                >
+                  <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <ul
+                  class="dropdown-menu"
+                  x-placement="bottom-start"
+                  style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);"
+                >
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click.prevent="loadProductModo(data.item)"
+                    >Edit</a>
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click.prevent="deleteProducts(data.item.id)"
+                    >Delete</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </template>
+
+          <template v-slot:cell(active)="data">
+            <b-col md="6" class="mb-3" v-if="data.item.active === 'Yes'">
+              <b-icon icon="circle-fill" variant="success"  font-scale="1"></b-icon>
+            </b-col>
+            <b-col md="6" class="mb-3" v-if="data.item.active === 'No'">
+              <b-icon icon="circle-fill" variant="danger" font-scale="1"></b-icon>
+            </b-col>
+          </template>
+          <template v-slot:cell(image)="data">
+            <div class="p-2">
+              <v-img src="https://picsum.photos/510/300?random" alt="image" height="100px"></v-img>
+            </div>
           </template>
           <template v-slot:table-busy>
             <div class="text-center text-danger my-2">
@@ -80,7 +125,7 @@
           </template>
         </b-table>
         <div class="card-footer">
-            <b-col sm="7" md="4" class="my-1">
+          <b-col sm="7" md="4" class="my-1">
             <b-form-group
               label="Product / page"
               label-cols-sm="6"
@@ -116,14 +161,19 @@ export default {
     return {
       mode: "save",
       Products: {
-        nome: "",
-        sigla: "",
+        name: "",
+        image: "",
+        ref: "",
+        category: "",
+        price_ht: "",
+        quantity: "",
+        active: "",
       },
-      Product: [],
+      product: [],
       errors: {},
       success: true,
       isBusy: false,
-      action: "api/products",
+      action: "api/product",
       filter: null,
       perPage: 5,
       pageOptions: [5, 10, 15, 20],
@@ -192,8 +242,14 @@ export default {
     reset() {
       this.mode = "save";
       this.Products = {
-        nome: "",
-        sigla: "",
+        name: "",
+        category: "",
+        created_at: "",
+        image: "",
+        price_ht: "",
+        quantity: "",
+        ref: "",
+        active: "",
       };
       this.loadProducts();
     },
@@ -265,7 +321,7 @@ export default {
         .get(this.action)
         .then(
           (res) => (
-            (this.Product = res.data), (this.totalRows = res.data.length)
+            (this.product = res.data), (this.totalRows = res.data.length)
           )
         );
     },
@@ -285,7 +341,7 @@ export default {
           if (result.value) {
             //send request to the server
             axios
-              .delete("api/unidade-medida/" + id)
+              .delete(this.action + "/" + id)
               .then((response) => {
                 swal.fire(
                   "Deletado!",
@@ -305,9 +361,10 @@ export default {
         });
     },
 
-    loadProductModo(unidadesMedidas, mode = "update") {
+    loadProductModo(products_data, mode = "update") {
+      console.log(products_data);
       this.mode = mode;
-      this.products = { ...unidadesMedidas };
+      this.Products = { ...products_data };
     },
   },
   mounted() {
