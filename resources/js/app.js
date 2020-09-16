@@ -16,6 +16,7 @@ import VueProgressBar from 'vue-progressbar';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import VueMask from 'v-mask';
+import Vuetify from 'vuetify';
 
 
 //moment.locale('pt-br');
@@ -61,7 +62,7 @@ const Toast = Swal.mixin({
 window.Toast = Toast;
 Vue.use(VueProgressBar, options);
 Vue.use(VueMask);
-
+Vue.use(Vuetify); 
 Vue.use(Toasted);
 Vue.use(VueRouter);
 Vue.use(Vuex);
@@ -152,5 +153,7 @@ Vue.component('pagination', require('laravel-vue-pagination'));
 const app = new Vue({
     router,
     el: '#app',
+    vuetify: new Vuetify(),
+
   
 });
