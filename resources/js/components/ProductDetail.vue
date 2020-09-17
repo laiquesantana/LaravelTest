@@ -19,11 +19,12 @@
                         <v-btn color="#1F7087" text>Image</v-btn>
                         <input type="file" @change="onFileChange" />
                       </v-card-actions>
+                      
                       <v-img
                         class="white--text align-end"
                         aspect-ratio="1.4"
                         contain
-                        :src="this.product_data.image"
+                        :src="imagepath"
                       ></v-img>
                     </v-card>
                   </v-col>
@@ -178,6 +179,7 @@ export default {
   data() {
     return {
       value: [],
+      imagepath: null,
       options: [
         {
           id: "Esop",
@@ -259,38 +261,45 @@ export default {
       const file = e.target.files[0];
       this.file = file;
       this.product_data.image = URL.createObjectURL(file);
-    },
+      this.imagepath = URL.createObjectURL(file);
 
-    loadProductDetail(){
-        this.$Progress.start();
-          axios
-        .get("api/product/" + this.$route.query.productId)
-        .then(({ data }) => (this.product_data = data), this.$Progress.finish())
-        .catch((error) => {
-          Toast.fire({
-            icon: "error",
-            title: "Fail to load product detail!",
-          }),
-            this.$Progress.fail();
-        });
-    },
-    save() {
-      this.$Progress.start();
-      let file = this.file;
+
+       let file1 = this.file;
       let reader = new FileReader();
       let limit = 1024 * 1024 * 2;
 
-      if (file.size > limit) {
+      if (file1.size > limit) {
         swal.fire({
           icon: "error",
           title: "Size over allowed!",
         });
         return false;
       }
-      reader.onloadend = (file) => {
+      reader.onloadend = (file1) => {
         this.product_data.image = reader.result;
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file1);
+      
+    },
+
+    loadProductDetail(){
+        this.$Progress.start();
+          axios
+        .get("api/product/" + this.$route.query.productId)
+        .then(({ data }) => (this.product_data = data, this.imagepath = 'img/productImage/'+data.image), this.$Progress.finish(),)
+        .catch((error) => {
+          Toast.fire({
+            icon: "error",
+            title: "Fail to load product detail!",
+          }),
+          
+            this.$Progress.fail();
+        });
+        
+    },
+    save() {
+      this.$Progress.start();
+     
        if (this.loaded) {
         this.$Progress.start();
 
@@ -327,9 +336,10 @@ export default {
     },
   },
 
+
   beforeMount() {
     this.loadProductDetail();
-    this.value.push(this.product_data.category);
+   
     if (this.product_data.active == "Yes") {
       this.variant = "success";
       this.active = true;
