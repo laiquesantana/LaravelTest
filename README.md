@@ -22,3 +22,8 @@ a API com o laravel passaport e rodar os seeds para popular a tabela de produtos
 8º Acessar http://localhost:8000
 
 9º Navegar menu lateral para "List of Products"
+
+
+## testes
+
+1º rodar o comando php artisan test 
