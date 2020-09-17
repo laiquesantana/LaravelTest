@@ -1,5 +1,5 @@
 ## Dependências 
-Node, npm, composer, mysql, php 7.3
+Node, npm, composer, mysql, php 7.3, apache
 
 
 ## Passo a Passo instalação 
