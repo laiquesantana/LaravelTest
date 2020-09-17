@@ -17,6 +17,7 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import VueMask from 'v-mask';
 import Vuetify from 'vuetify';
+import CKEditor from '@ckeditor/ckeditor5-vue';
 
 
 //moment.locale('pt-br');
@@ -66,6 +67,8 @@ Vue.use(Vuetify);
 Vue.use(Toasted);
 Vue.use(VueRouter);
 Vue.use(Vuex);
+Vue.use( CKEditor );
+
 // Install BootstrapVue
 Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
@@ -85,6 +88,11 @@ const routes = [
         component: require('./components/Products.vue').default
     },
    
+    {
+        path: '/product-detail',
+        name: 'product-detail',
+        component: require('./components/ProductDetail.vue').default
+    },
     {
         path: '*',
         component: require('./components/NotFound.vue').default

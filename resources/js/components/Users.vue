@@ -241,7 +241,7 @@ export default {
                 this.loadUsers();
               })
               .catch((error) => {
-                swal.fire("Falha!", "Oops something went wrong try, again later", "error");
+                swal.fire("Error!", "Oops something went wrong, try again later", "error");
               });
           }
         });

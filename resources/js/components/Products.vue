@@ -12,8 +12,8 @@
     <h3>Product List</h3>
     <div class="card-tools pt-5">
       <button class="btn btn-success" @click>
-        Add a product
-        <i class="fas fa-plus fa-fw"></i>
+           <i class="fas fa-plus fa-fw"></i>  Add a product
+   
       </button>
     </div>
     <hr />
@@ -23,8 +23,6 @@
           <b-form-group
             label="Search"
             label-cols-sm="1"
-            label-align-sm="left"
-            label-size="sm"
             label-for="filterInput"
             class="mb-1"
           >
@@ -89,8 +87,8 @@
                     <a
                       class="dropdown-item"
                       href="#"
-                      @click.prevent="loadProductModo(data.item)"
-                    >Edit</a>
+                      @click.prevent="detailtProductModo(data.item)"
+                    >Detail</a>
                   </li>
                   <li>
                     <a
@@ -125,18 +123,19 @@
           </template>
         </b-table>
         <div class="card-footer">
-          <b-col sm="7" md="4" class="my-1">
+            <b-form-row>
+          <b-col sm="6" md="6" class="my-1">
             <b-form-group
               label="Product / page"
               label-cols-sm="6"
               label-cols-md="4"
               label-cols-lg="3"
-              label-align-sm="left"
+              label-align-sm="fill"
               label-size="sm"
               label-for="perPageSelect"
               class="mb-0"
             >
-              <b-form-select v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"></b-form-select>
+              <b-form-select class="cold-md-4" v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"></b-form-select>
             </b-form-group>
           </b-col>
           <b-col sm="7" md="6" class="my-1">
@@ -146,9 +145,10 @@
               :per-page="perPage"
               align="fill"
               size="sm"
-              class="my-0"
+              class="my-3"
             ></b-pagination>
           </b-col>
+            </b-form-row>
         </div>
       </div>
     </b-card>
@@ -328,14 +328,14 @@ export default {
     deleteProducts(id) {
       swal
         .fire({
-          title: "você tem certeza?",
-          text: "Está ação não poderá ser revertida!",
+          title: "Are you sure?",
+          text: "This action cannot be reversed!!",
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
-          confirmButtonText: "Sim, deletar!",
-          cancelButtonText: "Cancelar!",
+          confirmButtonText: "Yes, delete!",
+          cancelButtonText: "Cancel!",
         })
         .then((result) => {
           if (result.value) {
@@ -344,16 +344,16 @@ export default {
               .delete(this.action + "/" + id)
               .then((response) => {
                 swal.fire(
-                  "Deletado!",
-                  "Unidade de medida deletada com sucesso!",
+                  "Deleted!",
+                  "Product successfully deleted!",
                   "success"
                 );
                 this.loadProducts();
               })
               .catch((error) => {
                 swal.fire(
-                  "Falha!",
-                  "Problema ao deletar Unidade de medida",
+                  "Error!",
+                  "Oops something went wrong, try again later",
                   "error"
                 );
               });
@@ -361,10 +361,12 @@ export default {
         });
     },
 
-    loadProductModo(products_data, mode = "update") {
-      console.log(products_data);
+    detailtProductModo(products_data, mode = "update") {
       this.mode = mode;
       this.Products = { ...products_data };
+
+      this.$router.push({ name: 'product-detail', params: { 'product': this.Products} }) 
+
     },
   },
   mounted() {

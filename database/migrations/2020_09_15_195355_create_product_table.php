@@ -18,8 +18,11 @@ class CreateProductTable extends Migration
             $table->string('image')->nullable();
             $table->string('ref');
             $table->string('name');
+            $table->string('resume');
             $table->string('category');
             $table->decimal('price_ht');
+            $table->decimal('price_ttc');
+            $table->longText('description');
             $table->integer('quantity');
             $table->enum('active',['Yes','No']);
             $table->timestamps();

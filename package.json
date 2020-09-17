@@ -26,7 +26,10 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^22.0.0",
+        "@ckeditor/ckeditor5-vue": "^1.0.2",
         "@fortawesome/fontawesome-free": "^5.13.0",
+        "@riophae/vue-treeselect": "^0.4.0",
         "admin-lte": "^3.0.4",
         "bootstrap-vue": "^2.11.0",
         "laravel-vue-pagination": "^2.3.1",
