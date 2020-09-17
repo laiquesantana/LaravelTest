@@ -76,7 +76,7 @@ Vue.use(IconsPlugin);
 
 
 const routes = [
-       {
+    {
         path: '/users',
         name: 'users',
         component: require('./components/Users.vue').default
@@ -91,7 +91,8 @@ const routes = [
     {
         path: '/product-detail',
         name: 'product-detail',
-        component: require('./components/ProductDetail.vue').default
+        component: require('./components/ProductDetail.vue').default,
+        props: true
     },
     {
         path: '*',

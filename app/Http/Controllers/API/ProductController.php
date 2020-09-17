@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
 use App\Product;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,7 @@ class ProductController extends Controller
     public function __construct()
     {
        
-        $this->middleware('auth:api');
+      //  $this->middleware('auth:api');
 
     }
 
@@ -63,7 +64,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        return Product::findOrFail($id);
     }
 
     /**
@@ -84,9 +85,31 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProductRequest $request, $id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        $currentImage = $product->image;
+        $data = $request->validated();
+
+
+
+        if($request->image != $currentImage){
+            $extension = explode('/', mime_content_type($request->image))[1];
+            $name = time().'.' .$extension;
+
+            \Image::make($request->image)->save(public_path('img/productImage/').$name);
+            $data['image'] = $name;
+
+            $image = public_path('img/productImage/').$currentImage;
+            if(file_exists($image)){
+                @unlink($image);
+            }
+
+        }
+
+        $product->update($data);
+        return ['message' => "Success"];
     }
 
     /**

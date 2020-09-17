@@ -46,10 +46,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
 
-          <div class="info">
+          {{-- <div class="info">
             <a href="#" class="d-block">{{ Auth::user()->name }}<span
                 class="d-block text-muted">{{Auth::user()->getUserType()}} </span></a>
-          </div>
+          </div> --}}
         </div>
 
         <!-- Sidebar Menu -->

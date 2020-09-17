@@ -11,7 +11,7 @@
     </b-form>-->
     <h3>Product List</h3>
     <div class="card-tools pt-5">
-      <button class="btn btn-success" @click>
+      <button class="btn btn-success" >
            <i class="fas fa-plus fa-fw"></i>  Add a product
    
       </button>
@@ -112,7 +112,8 @@
           </template>
           <template v-slot:cell(image)="data">
             <div class="p-2">
-              <v-img src="https://picsum.photos/510/300?random" alt="image" height="100px"></v-img>
+
+              <v-img :src="'img/productImage/'+data.item.image" alt="image" height="100px"></v-img>
             </div>
           </template>
           <template v-slot:table-busy>
@@ -365,7 +366,7 @@ export default {
       this.mode = mode;
       this.Products = { ...products_data };
 
-      this.$router.push({ name: 'product-detail', params: { 'product': this.Products} }) 
+      this.$router.push({ name: 'product-detail', query: { 'productId': this.Products.id} }) 
 
     },
   },

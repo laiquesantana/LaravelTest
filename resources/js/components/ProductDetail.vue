@@ -130,7 +130,7 @@
                     id="category"
                     name="category"
                     :autoLoadRootOptions="true"
-                    v-model="value"
+                    v-model="product_data.category"
                     value-consists-of="ALL_WITH_INDETERMINATE"
                     :multiple="false"
                     :options="options"
@@ -175,7 +175,6 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   components: { Treeselect },
-
   data() {
     return {
       value: [],
@@ -238,17 +237,21 @@ export default {
       editorConfig: {
         language: "pt",
       },
-      product_data: {
-        description: "",
-        resume: "",
-      },
+      product_data: {},
     };
   },
 
   watch: {
     // sempre que a pergunta mudar, essa função será executada
     active: function (newvalue, oldvalue) {
-      newvalue == true ? (this.variant = "success") : (this.variant = "danger");
+      if(newvalue == true) {
+           this.product_data.active  = 'Yes';
+        this.variant = "success";
+      }else{
+         this.product_data.active = 'No'
+         this.variant = "danger";
+      }  
+     
     },
   },
   methods: {
@@ -256,6 +259,20 @@ export default {
       const file = e.target.files[0];
       this.file = file;
       this.product_data.image = URL.createObjectURL(file);
+    },
+
+    loadProductDetail(){
+        this.$Progress.start();
+          axios
+        .get("api/product/" + this.$route.query.productId)
+        .then(({ data }) => (this.product_data = data), this.$Progress.finish())
+        .catch((error) => {
+          Toast.fire({
+            icon: "error",
+            title: "Fail to load product detail!",
+          }),
+            this.$Progress.fail();
+        });
     },
     save() {
       this.$Progress.start();
@@ -271,15 +288,47 @@ export default {
         return false;
       }
       reader.onloadend = (file) => {
-        this.product_data.arquivo = reader.result;
+        this.product_data.image = reader.result;
       };
       reader.readAsDataURL(file);
-      console.log(reader);
+       if (this.loaded) {
+        this.$Progress.start();
+
+        this.loaded = false;
+        this.success = false;
+        this.errors = {};
+        axios
+          .put("api/product/" + this.product_data.id, this.product_data)
+          .then((response) => {
+            this.fields = {}; //Clear input fields.
+            this.loaded = true;
+            this.success = true;
+            Toast.fire({
+              icon: "success",
+              title: "Product updated successfully!",
+            });
+
+            this.$Progress.finish();
+          })
+          .catch((error) => {
+            this.loaded = true;
+            this.success = false;
+            if (error.response.status === 422) {
+              this.errors = error.response.data.errors || {};
+            }
+            Toast.fire({
+              icon: "error",
+              title:  "Oops something went wrong, try again later",
+            });
+
+            this.$Progress.fail();
+          });
+      }
     },
   },
 
   beforeMount() {
-    this.product_data = { ...this.$route.params.product };
+    this.loadProductDetail();
     this.value.push(this.product_data.category);
     if (this.product_data.active == "Yes") {
       this.variant = "success";

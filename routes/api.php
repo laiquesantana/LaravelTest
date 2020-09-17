@@ -21,15 +21,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //best pratice to route protected, avoid use middleware in controller you may forget
 Route::group(['middleware' => 'auth:api'], function() {
     // get user profile
-    Route::get('findUser', 'API\UserController@search');
-
-    Route::post('change-password', 'API\ChangePasswordController@store');
-
-
+    
+    
 });
 
+Route::get('findUser', 'API\UserController@search');
+
+Route::post('change-password', 'API\ChangePasswordController@store');
+Route::apiResource('user', 'API\UserController');
+Route::apiResource('product', 'API\ProductController');
 Route::middleware(['auth:api'])->group(function () {
-    Route::apiResource('user', 'API\UserController');
-    Route::apiResource('product', 'API\ProductController');
 });
 
