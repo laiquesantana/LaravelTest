@@ -14,6 +14,20 @@
               <v-container>
                 <v-row dense>
                   <v-col cols="12">
+                    <v-card class="mx-auto" max-width="700">
+                      <v-card-actions>
+                        <v-btn color="#1F7087" text>Image</v-btn>
+                        <input type="file" @change="onFileChange" />
+                      </v-card-actions>
+                      <v-img
+                        class="white--text align-end"
+                        aspect-ratio="1.4"
+                        contain
+                        :src="this.product_data.image"
+                      ></v-img>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="12">
                     <v-card color="#1F7087" dark>
                       <v-card-title class="headline">Resume</v-card-title>
 
@@ -136,7 +150,6 @@
                     :button-variant="variant"
                     button
                   >{{ active ? 'Yes' : 'No' }}</b-form-checkbox>
-                  
                 </b-col>
               </b-form-row>
             </div>
@@ -222,7 +235,6 @@ export default {
       file: null,
       loaded: true,
       editor: ClassicEditor,
-
       editorConfig: {
         language: "pt",
       },
@@ -240,10 +252,12 @@ export default {
     },
   },
   methods: {
-    save() {
-      alert("opa");
+    onFileChange(e) {
+      const file = e.target.files[0];
+      this.file = file;
+      this.product_data.image = URL.createObjectURL(file);
     },
-    uploadArquivos() {
+    save() {
       this.$Progress.start();
       let file = this.file;
       let reader = new FileReader();
@@ -252,41 +266,15 @@ export default {
       if (file.size > limit) {
         swal.fire({
           icon: "error",
-          title: "Tamanho acima do permitido!",
+          title: "Size over allowed!",
         });
         return false;
       }
       reader.onloadend = (file) => {
         this.product_data.arquivo = reader.result;
-
-        axios
-          .put("api/product" + this.dados_atendimento.id, this.product_data)
-          .then((response) => {
-            this.loaded = true;
-            this.success = true;
-            Toast.fire({
-              icon: "success",
-              title: "Upload Realizado com Sucesso !",
-            });
-
-            this.$Progress.finish();
-          })
-          .catch((error) => {
-            this.loaded = true;
-            this.success = false;
-            if (error.response.status === 422) {
-              this.errors = error.response.data.errors || {};
-            }
-            Toast.fire({
-              icon: "error",
-              title:
-                "Ops Houve Um Problema Durante O Upload de Arquivo, Tente Novamente!",
-            });
-
-            this.$Progress.fail();
-          });
       };
       reader.readAsDataURL(file);
+      console.log(reader);
     },
   },
 
@@ -303,3 +291,16 @@ export default {
   },
 };
 </script>
+
+<style>
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 100%;
+  max-height: 500px;
+}
+</style>

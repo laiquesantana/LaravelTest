@@ -17,6 +17,6 @@ $factory->define(Product::class, function (Faker $faker) {
         'quantity' => $faker->randomDigit,
         'price_ht' =>  $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 2),
         'price_ttc' =>  $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 2),
-        'resume' =>  $faker->text($maxNbChars = 200),
+        'resume' =>  $faker->text($maxNbChars = 10),
     ];
 });
