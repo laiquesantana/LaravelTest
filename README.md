@@ -27,3 +27,11 @@ a API com o laravel passaport e rodar os seeds para popular a tabela de produtos
 ## testes
 
 1º rodar o comando php artisan test 
+
+
+## seeder
+para popular a tabela de produtos com mais produtos basta rodar ProductSeeder com o seguinte comando :
+
+php artisan db:seed --class=ProductSeeder
+
+caso deseje alterar a quantidade de registros criado alterar na configuração do seeder
